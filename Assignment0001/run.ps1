@@ -6,7 +6,7 @@ $resourceGroupName = "NG-RESOURCEGROUP-NAME"
 $storageAccountName = Read-Host -Prompt "Enter Storage Account Name (lowercase and numbers allowed. Start with 'ng')"
 
 # Redundancy options
-$allowedOptions = @("Standard_LRS", "Standard_GRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS",)
+$allowedOptions = @("Standard_LRS", "Standard_GRS", "Standard_ZRS", "Premium_LRS", "Premium_ZRS")
 
 # Redundancy option input with validation
 do {

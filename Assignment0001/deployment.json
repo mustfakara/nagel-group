@@ -1,126 +1,134 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2020-06-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.001",
-    "metadata": {
-      "name": "Powershell CLI",
-      "description": "Storage Account Deployment JSON."
-    },
-    "parameters": {
-      "location": {
-        "type": "string",
-        "defaultValue": "germanywestcentral",
-        "metadata": {
-          "description": "The region for the storage account."
-        }
-      },
-      "storageAccountName": {
-        "type": "string",
-        "metadata": {
-          "description": "Storage Account name must suit the naming conventions (Must start with 'ng-' ,can contain only lowercase letters and numbers)."
-        }
-      },
-      "accountType": {
-        "type": "string",
-        "defaultValue": "Standard_LRS",
-        "allowedValues": [
-          "Standard_LRS",
-          "Standard_GRS",
-          "Standard_ZRS",
-          "Premium_LRS",
-          "Premium_ZRS"
-        ],
-        "metadata": {
-          "description": "Storage Account redundancy options. Premium provides low-latency and high IOPS. LRS: Locally-redundant storage 3 copies in same data center. \nGRS: Geo-redundant storage 3 in primary region and 3 in secondary region total 6 copies. \nZRS: Zone-Redundant Storage 3 copies in different zones in the same region."
-        }
-      },
-      "kind": {
-        "type": "string",
-        "defaultValue": "StorageV2",
-        "metadata": {
-          "description": "Specifies the type of storage account."
-        }
-      },
-      "minimumTlsVersion": {
-        "type": "string",
-        "defaultValue": "TLS1_2",
-        "metadata": {
-          "description": "Minimum TLS version for secure connection."
-        }
-      },
-      "supportsHttpsTrafficOnly": {
-        "type": "bool",
-        "defaultValue": true,
-        "metadata": {
-          "description": "Enforce HTTPS traffic only."
-        }
-      },
-      "allowBlobPublicAccess": {
-        "type": "bool",
-        "defaultValue": false
-      },
-      "accessTier": {
-        "type": "string",
-        "defaultValue": "Hot",
-        "metadata": {
-          "description": "Access tier for blobs. Hot for frequent access, Cool for infrequent access."
-        }
-      },
-      "networkAclsDefaultAction": {
-        "type": "string",
-        "defaultValue": "Deny",
-        "metadata": {
-          "description": "Allow public access from all networks."
-        }
-      },
-      "isShareSoftDeleteEnabled": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-          "description": "Soft delete for Azure Files. Disabled by default."
-        }
-      },
-      "enableSoftDeleteForBlobs": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-          "description": "Enable soft delete for blobs. Disabled by default."
-        }
-      },
-      "enableSoftDeleteForContainers": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-          "description": "Enable soft delete for containers. Disabled by default."
-        }
-      },
-      "enableSoftDeleteForFileShares": {
-        "type": "bool",
-        "defaultValue": false,
-        "metadata": {
-          "description": "Enable soft delete for file shares. Disabled by default."
-        }
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "type": "string",
+      "defaultValue": "germanywestcentral",
+      "metadata": {
+        "description": "The region for the storage account."
       }
     },
-    "resources": [
-      {
-        "name": "[parameters('storageAccountName')]",
-        "type": "Microsoft.Storage/storageAccounts",
-        "apiVersion": "2023-05-01",
-        "location": "[parameters('location')]",
-        "sku": {
-          "name": "[parameters('accountType')]"
+    "storageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Storage Account name must suit the naming conventions (Must start with 'ng-' ,can contain only lowercase letters and numbers)."
+      }
+    },
+    "accountType": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_ZRS",
+        "Standard_GZRS",
+        "Premium_LRS",
+        "Premium_GRS",
+        "Premium_ZRS"
+      ],
+      "metadata": {
+        "description": "Storage Account redundancy options. Premium provides low-latency and high IOPS. LRS: Locally-redundant storage 3 copies in same data center, low protection level, low cost. GRS: Geo-redundant storage 3 in primary region and 3 in secondary region total 6 copies, medium protection level, medium cost. ZRS: Zone-Redundant Storage 3 copies in different zones in the same region, high protection, medium-high cost. GZRS: Geo-Zone-Redundant Storage 3 ZRS copies and 3 secondary copies total 6 copies, very high protection, high cost."
+      }
+    },
+    "kind": {
+      "type": "string",
+      "defaultValue": "StorageV2",
+      "metadata": {
+        "description": "Specifies the type of storage account."
+      }
+    },
+    "minimumTlsVersion": {
+      "type": "string",
+      "defaultValue": "TLS1_2",
+      "metadata": {
+        "description": "Minimum TLS version for secure connection."
+      }
+    },
+    "supportsHttpsTrafficOnly": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Enforce HTTPS traffic only."
+      }
+    },
+    "allowBlobPublicAccess": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Disable public access for the storage account."
+      }
+    },
+    "accessTier": {
+      "type": "string",
+      "defaultValue": "Hot",
+      "metadata": {
+        "description": "Access tier for blobs. Hot for frequent access, Cool for infrequent access."
+      }
+    },
+    "networkAclsDefaultAction": {
+      "type": "string",
+      "defaultValue": "Deny",
+      "metadata": {
+        "description": "Deny public access from all networks."
+      }
+    },
+    "isShareSoftDeleteEnabled": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Soft delete for Azure Files. Disabled by default."
+      }
+    },
+    "enableSoftDeleteForBlobs": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable soft delete for blobs. Disabled by default."
+      }
+    },
+    "enableSoftDeleteForContainers": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable soft delete for containers. Disabled by default."
+      }
+    },
+    "enableSoftDeleteForFileShares": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Enable soft delete for file shares. Disabled by default."
+      }
+    },
+    "publicNetworkAccess": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "metadata": {
+        "description": "Enable public access outside from network. Disabled by default."
+      }
+    }
+  },
+  "resources": [
+    {
+      "name": "[parameters('storageAccountName')]",
+      "type": "Microsoft.Storage/storageAccounts",
+      "apiVersion": "2023-05-01",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "[parameters('accountType')]"
+      },
+      "kind": "[parameters('kind')]",
+      "properties": {
+        "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+        "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+        "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+        "accessTier": "[parameters('accessTier')]",
+        "networkAcls": {
+          "defaultAction": "[parameters('networkAclsDefaultAction')]"
         },
-        "kind": "[parameters('kind')]",
-        "properties": {
-          "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
-          "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
-          "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
-          "accessTier": "[parameters('accessTier')]",
-          "networkAcls": {
-            "defaultAction": "[parameters('networkAclsDefaultAction')]"
-          }
-        }
+        "publicNetworkAccess": "[parameters('publicNetworkAccess')]"
       }
-    ]
-  }
-  
+    }
+  ]
+}
