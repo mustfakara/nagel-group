@@ -1,0 +1,185 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "germanywestcentral"
+            
+        },
+        "privateEndpointName": {
+            "type": "string"
+        },
+        "privateLinkResource": {
+            "type": "string"
+        },
+        "targetSubResource": {
+            "type": "array",
+            "defaultValue": ["file"]
+        },
+        "requestMessage": {
+            "type": "string"
+        },
+        "subnet": {
+            "type": "string"
+        },
+        "virtualNetworkId": {
+            "type": "string"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "string"
+        },
+        "subnetDeploymentName": {
+            "type": "string"
+        },
+        "privateDnsDeploymentName": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "location": "[parameters('location')]",
+            "name": "[parameters('privateEndpointName')]",
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2021-05-01",
+            "properties": {
+                "subnet": {
+                    "id": "[parameters('subnet')]"
+                },
+                "customNetworkInterfaceName": "NG-FILE-SERVICE-REVIEW-PEP-000-nic",
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('privateEndpointName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[parameters('privateLinkResource')]",
+                            "groupIds": "[parameters('targetSubResource')]"
+                        }
+                    }
+                ]
+            },
+            "tags": {},
+            "dependsOn": []
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[parameters('privateDnsDeploymentName')]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('privateEndpointName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "PrivateDnsZone-9993cb06-e88e-4ed9-b843-52b472392058",
+                            "type": "Microsoft.Resources/deployments",
+                            "subscriptionId": "e468025a-9923-4e46-977e-344fba9b2040",
+                            "resourceGroup": "NG-SANDBOX-JUMPSERVER-001",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "privatelink.file.core.windows.net",
+                                            "location": "global",
+                                            "tags": {},
+                                            "properties": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "VirtualNetworkLink-20241210150727",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('privateDnsDeploymentName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "name": "VirtualNetworklink-9993cb06-e88e-4ed9-b843-52b472392059",
+                            "type": "Microsoft.Resources/deployments",
+                            "subscriptionId": "e468025a-9923-4e46-977e-344fba9b2040",
+                            "resourceGroup": "NG-SANDBOX-JUMPSERVER-001",
+                            "properties": {
+                                "mode": "Incremental",
+                                "template": {
+                                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat('privatelink.file.core.windows.net', '/', uniqueString(parameters('virtualNetworkId')))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('virtualNetworkId')]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "DnsZoneGroup-20241210150727",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "NG-FILE-SERVICE-REVIEW-000",
+            "dependsOn": [
+                "[parameters('privateEndpointName')]",
+                "[parameters('privateDnsDeploymentName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2021-05-01",
+                            "name": "[concat(parameters('privateEndpointName'), '/', 'default')]",
+                            "location": "[parameters('location')]",
+                            "properties": {
+                                "privateDnsZoneConfigs": [
+                                    {
+                                        "name": "privatelink-file-core-windows-net",
+                                        "properties": {
+                                            "privateDnsZoneId": "/subscriptions/e468025a-9923-4e46-977e-344fba9b2040/resourceGroups/NG-SANDBOX-JUMPSERVER-001/providers/Microsoft.Network/privateDnsZones/privatelink.file.core.windows.net"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

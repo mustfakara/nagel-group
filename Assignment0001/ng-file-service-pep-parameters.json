@@ -1,0 +1,31 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "privateEndpointName": {
+            "value": "NG-FILE-SERVICE-REVIEW-PEP-000"
+        },
+        "privateLinkResource": {
+            "value": "/subscriptions/e468025a-9923-4e46-977e-344fba9b2040/resourceGroups/NG-FILE-SERVICE-REVIEW-000/providers/Microsoft.Storage/storageAccounts/ngfileservicereviewsa000"
+        },
+
+        "requestMessage": {
+            "value": ""
+        },
+        "subnet": {
+            "value": "/subscriptions/e468025a-9923-4e46-977e-344fba9b2040/resourceGroups/NG-SANDBOX-JUMPSERVER-001/providers/Microsoft.Network/virtualNetworks/NG-SANDBOX-JUMPSERVER-VNET-001/subnets/FileService"
+        },
+        "virtualNetworkId": {
+            "value": "/subscriptions/e468025a-9923-4e46-977e-344fba9b2040/resourceGroups/NG-SANDBOX-JUMPSERVER-001/providers/Microsoft.Network/virtualNetworks/NG-SANDBOX-JUMPSERVER-VNET-001"
+        },
+        "subnetDeploymentName": {
+            "value": "UpdateSubnetDeployment-20241210150727"
+        },
+        "virtualNetworkResourceGroup": {
+            "value": "NG-SANDBOX-JUMPSERVER-001"
+        },
+        "privateDnsDeploymentName": {
+            "value": "PrivateDns-20241210150727"
+        }
+    }
+}

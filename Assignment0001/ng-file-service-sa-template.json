@@ -1,0 +1,170 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2019-08-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "germanywestcentral"
+        },
+        "storageAccountName": {
+            "type": "string"
+        },
+        "accountType": {
+            "type": "string"
+        },
+        "kind": {
+            "type": "string",
+            "defaultValue": "StorageV2"
+        },
+        "minimumTlsVersion": {
+            "type": "string",
+            "defaultValue": "TLS1_2"
+        },
+        "supportsHttpsTrafficOnly": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "allowBlobPublicAccess": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "allowSharedKeyAccess": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "defaultOAuth": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "accessTier": {
+            "type": "string",
+            "defaultValue": "Hot"
+        },
+        "publicNetworkAccess": {
+            "type": "string",
+            "defaultValue": "Disabled"
+        },
+        "allowCrossTenantReplication": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "networkAclsBypass": {
+            "type": "string",
+            "defaultValue": "AzureServices"
+        },
+        "networkAclsDefaultAction": {
+            "type": "string",
+            "defaultValue": "Deny"
+        },
+        "networkAclsIpRules": {
+            "type": "array",
+            "defaultValue": []
+        },
+        "dnsEndpointType": {
+            "type": "string",
+            "defaultValue": "Standard"
+        },
+        "largeFileSharesState": {
+            "type": "string",
+            "defaultValue": "Enabled"
+        },
+        "keySource": {
+            "type": "string",
+            "defaultValue": "Microsoft.Storage"
+        },
+        "encryptionEnabled": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "keyTypeForTableAndQueueEncryption": {
+            "type": "string",
+            "defaultValue": "Account"
+        },
+        "infrastructureEncryptionEnabled": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "isShareSoftDeleteEnabled": {
+            "type": "bool",
+            "defaultValue": true
+        },
+        "shareSoftDeleteRetentionDays": {
+            "type": "int",
+            "defaultValue": 7
+        },
+        "enableSoftDeleteForContainers": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "enableSoftDeleteForBlobs": {
+            "type": "bool",
+            "defaultValue": false
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2023-05-01",
+            "location": "[parameters('location')]",
+            "properties": {
+                "minimumTlsVersion": "[parameters('minimumTlsVersion')]",
+                "supportsHttpsTrafficOnly": "[parameters('supportsHttpsTrafficOnly')]",
+                "allowBlobPublicAccess": "[parameters('allowBlobPublicAccess')]",
+                "allowSharedKeyAccess": "[parameters('allowSharedKeyAccess')]",
+                "defaultToOAuthAuthentication": "[parameters('defaultOAuth')]",
+                "accessTier": "[parameters('accessTier')]",
+                "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
+                "allowCrossTenantReplication": "[parameters('allowCrossTenantReplication')]",
+                "networkAcls": {
+                    "bypass": "[parameters('networkAclsBypass')]",
+                    "defaultAction": "[parameters('networkAclsDefaultAction')]",
+                    "ipRules": "[parameters('networkAclsIpRules')]"
+                },
+                "dnsEndpointType": "[parameters('dnsEndpointType')]",
+                "largeFileSharesState": "[parameters('largeFileSharesState')]",
+                "encryption": {
+                    "keySource": "[parameters('keySource')]",
+                    "services": {
+                        "blob": {
+                            "enabled": "[parameters('encryptionEnabled')]"
+                        },
+                        "file": {
+                            "enabled": "[parameters('encryptionEnabled')]"
+                        },
+                        "table": {
+                            "enabled": "[parameters('encryptionEnabled')]"
+                        },
+                        "queue": {
+                            "enabled": "[parameters('encryptionEnabled')]"
+                        }
+                    },
+                    "requireInfrastructureEncryption": "[parameters('infrastructureEncryptionEnabled')]"
+                }
+            },
+            "dependsOn": [],
+            "sku": {
+                "name": "[parameters('accountType')]"
+            },
+            "kind": "[parameters('kind')]",
+            "tags": {}
+        },
+        {
+            "name": "[concat(parameters('storageAccountName'), '/default')]",
+            "type": "Microsoft.Storage/storageAccounts/fileservices",
+            "apiVersion": "2023-05-01",
+            "properties": {
+                "protocolSettings": null,
+                "shareDeleteRetentionPolicy": {
+                    "enabled": "[parameters('isShareSoftDeleteEnabled')]",
+                    "days": "[parameters('shareSoftDeleteRetentionDays')]"
+                }
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+            ]
+        }
+    ],
+    "outputs": {}
+}
